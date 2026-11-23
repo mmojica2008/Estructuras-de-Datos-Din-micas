@@ -1,0 +1,395 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HospitalSys | Panel principal</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <span>✚</span>
+            <h2>HospitalSys</h2>
+        </div>
+
+        <p class="menu-titulo">MENÚ PRINCIPAL</p>
+
+        <nav>
+            <a href="/">▦ &nbsp; Dashboard</a>
+            <a href="#pacientes">♙ &nbsp; Pacientes</a>
+            <a href="#medicos">⚕ &nbsp; Médicos</a>
+            <a href="#citas">▣ &nbsp; Citas médicas</a>
+            <a href="#habitaciones">▤ &nbsp; Habitaciones</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            Sistema de Gestión Hospitalaria
+        </div>
+    </aside>
+
+    <main class="contenido">
+
+        <header class="encabezado">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Bienvenido al sistema de gestión hospitalaria.</p>
+            </div>
+
+            <div class="usuario">
+                <span>●</span> Administrador
+            </div>
+        </header>
+
+        <section class="bienvenida">
+            <div>
+                <h2>Panel de control hospitalario</h2>
+                <p>Gestiona las operaciones del hospital desde un solo lugar.</p>
+            </div>
+            <span class="icono-hospital">✚</span>
+        </section>
+
+        <h2 class="subtitulo">Resumen general</h2>
+
+        <section class="tarjetas">
+
+            <div class="tarjeta">
+                <div class="tarjeta-icono azul">♙</div>
+                <h3>Pacientes</h3>
+                <p class="numero">{{ pacientes|length }}</p>
+                <small>Pacientes registrados</small>
+            </div>
+
+            <div class="tarjeta">
+                <div class="tarjeta-icono verde">⚕</div>
+                <h3>Médicos</h3>
+                <p class="numero">{{ medicos|length }}</p>
+                <small>Médicos registrados</small>
+            </div>
+
+            <div class="tarjeta">
+                <div class="tarjeta-icono naranja">▣</div>
+                <h3>Citas médicas</h3>
+                <p class="numero">{{ citas|length }}</p>
+                <small>Citas programadas</small>
+            </div>
+
+            <div class="tarjeta">
+                <div class="tarjeta-icono morado">▤</div>
+                <h3>Habitaciones</h3>
+                <p class="numero">{{ habitaciones|length }}</p>
+                <small>Habitaciones registradas</small>
+            </div>
+
+            
+<!-- MODULO DE HABITACIONES -->
+
+<section class="pacientes" id="habitaciones">
+
+    <h2>Gestión de habitaciones</h2>
+    <p>Registra y administra las habitaciones del hospital.</p>
+
+    <form action="/registrar_habitacion" method="POST">
+
+        <label>Número de habitación</label>
+        <input type="number" name="numero"
+               placeholder="Ej. 101" min="1" required>
+
+        <label>Tipo de habitación</label>
+        <select name="tipo" required>
+            <option value="">Seleccionar tipo</option>
+            <option value="Individual">Individual</option>
+            <option value="Compartida">Compartida</option>
+            <option value="UCI">UCI</option>
+        </select>
+
+        <button type="submit">Registrar habitación</button>
+
+    </form>
+
+    <h3>Habitaciones registradas</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for habitacion in habitaciones %}
+            <tr>
+                <td>{{ habitacion.numero }}</td>
+                <td>{{ habitacion.tipo }}</td>
+                <td>{{ habitacion.estado }}</td>
+                <td>
+                    <form action="/cambiar_estado_habitacion/{{ habitacion.numero }}"
+                          method="POST">
+                        <button type="submit">Cambiar estado</button>
+                    </form>
+
+                    <form action="/eliminar_habitacion/{{ habitacion.numero }}"
+                          method="POST">
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4">No hay habitaciones registradas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</section>
+
+
+        </section>
+
+        <section class="actividad">
+            <h2>Actividad reciente</h2>
+            <p>Aquí aparecerán los movimientos registrados en el hospital.</p>
+        </section>
+
+        <!-- MODULO DE PACIENTES -->
+
+        <section class="pacientes" id="pacientes">
+
+            <h2>Gestión de pacientes</h2>
+            <p>Registra y administra los pacientes del hospital.</p>
+
+            <form action="/registrar_paciente" method="POST">
+
+                <label>Identificación</label>
+                <input type="number" name="id"
+                       placeholder="Número de identificación" required>
+
+                <label>Nombre completo</label>
+                <input type="text" name="nombre"
+                       placeholder="Nombre del paciente" required>
+
+                <label>Edad</label>
+                <input type="number" name="edad"
+                       placeholder="Edad" min="0" required>
+
+                <label>Teléfono</label>
+                <input type="text" name="telefono"
+                       placeholder="Número de teléfono" required>
+
+                <button type="submit">Registrar paciente</button>
+
+            </form>
+
+            <h3>Pacientes registrados</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Edad</th>
+                        <th>Teléfono</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for paciente in pacientes %}
+                    <tr>
+                        <td>{{ paciente.id }}</td>
+                        <td>{{ paciente.nombre }}</td>
+                        <td>{{ paciente.edad }}</td>
+                        <td>{{ paciente.telefono }}</td>
+                        <td>
+                            <form action="/eliminar_paciente/{{ paciente.id }}"
+                                  method="POST">
+                                <button type="submit">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5">No hay pacientes registrados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </section>
+
+
+<!-- MODULO DE MEDICOS -->
+
+<section class="pacientes" id="medicos">
+
+    <h2>Gestión de médicos</h2>
+    <p>Registra y administra los médicos del hospital.</p>
+
+    <form action="/registrar_medico" method="POST">
+
+        <label>Identificación</label>
+        <input type="number" name="id"
+               placeholder="Número de identificación" required>
+
+        <label>Nombre completo</label>
+        <input type="text" name="nombre"
+               placeholder="Nombre del médico" required>
+
+        <label>Especialidad</label>
+        <input type="text" name="especialidad"
+               placeholder="Especialidad médica" required>
+
+        <label>Teléfono</label>
+        <input type="text" name="telefono"
+               placeholder="Número de teléfono" required>
+
+        <button type="submit">Registrar médico</button>
+
+    </form>
+
+    <h3>Médicos registrados</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Especialidad</th>
+                <th>Teléfono</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for medico in medicos %}
+            <tr>
+                <td>{{ medico.id }}</td>
+                <td>{{ medico.nombre }}</td>
+                <td>{{ medico.especialidad }}</td>
+                <td>{{ medico.telefono }}</td>
+                <td>
+                    <form action="/eliminar_medico/{{ medico.id }}"
+                          method="POST">
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5">No hay médicos registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</section>
+
+
+<!-- MODULO DE CITAS MEDICAS -->
+
+<section class="pacientes" id="citas">
+
+    <h2>Gestión de citas médicas</h2>
+    <p>Registra y administra las citas del hospital.</p>
+
+    <form action="/registrar_cita" method="POST">
+
+        <label>Identificación de la cita</label>
+        <input type="number" name="id"
+               placeholder="Número de cita" min="1" required>
+
+        <label>Paciente</label>
+        <select name="paciente" required>
+            <option value="">Seleccionar paciente</option>
+            {% for paciente in pacientes %}
+            <option value="{{ paciente.nombre }}">
+                {{ paciente.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Médico</label>
+        <select name="medico" required>
+            <option value="">Seleccionar médico</option>
+            {% for medico in medicos %}
+            <option value="{{ medico.nombre }}">
+                {{ medico.nombre }} - {{ medico.especialidad }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Fecha</label>
+        <input type="date" name="fecha" required>
+
+        <label>Hora</label>
+        <input type="time" name="hora" required>
+
+        <button type="submit">Registrar cita</button>
+
+    </form>
+
+    <h3>Citas registradas</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Paciente</th>
+                <th>Médico</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for cita in citas %}
+            <tr>
+                <td>{{ cita.id }}</td>
+                <td>{{ cita.paciente }}</td>
+                <td>{{ cita.medico }}</td>
+                <td>{{ cita.fecha }}</td>
+                <td>{{ cita.hora }}</td>
+                <td>{{ cita.estado }}</td>
+                <td>
+                    <form action="/eliminar_cita/{{ cita.id }}"
+                          method="POST">
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7">No hay citas registradas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form action="/atender_cita" method="POST">
+        <button type="submit">Atender siguiente cita</button>
+    </form>
+
+</section>
+
+
+
+        <footer>
+            Sistema de Gestión Hospitalaria Inteligente © 2026
+        </footer>
+
+    </main>
+
+</body>
+</html>
+
